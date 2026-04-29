@@ -1,46 +1,46 @@
 import type { ImgHTMLAttributes } from "react";
 import type { NeedSlug } from "../lib/types";
 
-import hunger from "./images/patient/hunger.png";
-import thirst from "./images/patient/thirst.png";
-import bathroom from "./images/patient/bathroom.png";
-import diaper from "./images/patient/diaper.png";
-import pain from "./images/patient/pain.png";
-import tired from "./images/patient/tired.png";
-import cold from "./images/patient/cold.png";
-import hot from "./images/patient/hot.png";
+import hunger from "./images/patient/hunger.webp";
+import thirst from "./images/patient/thirst.webp";
+import bathroom from "./images/patient/bathroom.webp";
+import diaper from "./images/patient/diaper.webp";
+import pain from "./images/patient/pain.webp";
+import tired from "./images/patient/tired.webp";
+import cold from "./images/patient/cold.webp";
+import hot from "./images/patient/hot.webp";
 
-import babyfood from "./images/caretaker/babyfood.png";
-import bed from "./images/caretaker/bed.png";
-import blanket from "./images/caretaker/blanket.png";
-import brushteeth from "./images/caretaker/brushteeth.png";
-import chocolate from "./images/caretaker/chocolate.png";
-import closewindows from "./images/caretaker/closewindows.png";
-import clothes from "./images/caretaker/clothes.png";
-import coffee from "./images/caretaker/coffee.png";
-import crackers from "./images/caretaker/crackers.png";
-import dentures from "./images/caretaker/dentures.png";
-import facialcream from "./images/caretaker/facialcream.png";
-import fruit from "./images/caretaker/fruit.png";
-import makeup from "./images/caretaker/makeup.png";
-import massage from "./images/caretaker/massage.png";
-import nightlight from "./images/caretaker/nightlight.png";
-import nuts from "./images/caretaker/nuts.png";
-import oatmeal from "./images/caretaker/oatmeal.png";
-import orangejuice from "./images/caretaker/orangejuice.png";
-import papaya from "./images/caretaker/papaya.png";
-import phone from "./images/caretaker/phone.png";
-import shower from "./images/caretaker/shower.png";
-import smoothie from "./images/caretaker/smoothie.png";
-import sofa from "./images/caretaker/sofa.png";
-import soup from "./images/caretaker/soup.png";
-import toast from "./images/caretaker/toast.png";
-import toilet from "./images/caretaker/toilet.png";
-import tv from "./images/caretaker/tv.png";
-import tvremote from "./images/caretaker/tvremote.png";
-import waterbottle from "./images/caretaker/waterbottle.png";
-import wheelchair from "./images/caretaker/wheelchair.png";
-import yogurt from "./images/caretaker/yogurt.png";
+import babyfood from "./images/caretaker/babyfood.webp";
+import bed from "./images/caretaker/bed.webp";
+import blanket from "./images/caretaker/blanket.webp";
+import brushteeth from "./images/caretaker/brushteeth.webp";
+import chocolate from "./images/caretaker/chocolate.webp";
+import closewindows from "./images/caretaker/closewindows.webp";
+import clothes from "./images/caretaker/clothes.webp";
+import coffee from "./images/caretaker/coffee.webp";
+import crackers from "./images/caretaker/crackers.webp";
+import dentures from "./images/caretaker/dentures.webp";
+import facialcream from "./images/caretaker/facialcream.webp";
+import fruit from "./images/caretaker/fruit.webp";
+import makeup from "./images/caretaker/makeup.webp";
+import massage from "./images/caretaker/massage.webp";
+import nightlight from "./images/caretaker/nightlight.webp";
+import nuts from "./images/caretaker/nuts.webp";
+import oatmeal from "./images/caretaker/oatmeal.webp";
+import orangejuice from "./images/caretaker/orangejuice.webp";
+import papaya from "./images/caretaker/papaya.webp";
+import phone from "./images/caretaker/phone.webp";
+import shower from "./images/caretaker/shower.webp";
+import smoothie from "./images/caretaker/smoothie.webp";
+import sofa from "./images/caretaker/sofa.webp";
+import soup from "./images/caretaker/soup.webp";
+import toast from "./images/caretaker/toast.webp";
+import toilet from "./images/caretaker/toilet.webp";
+import tv from "./images/caretaker/tv.webp";
+import tvremote from "./images/caretaker/tvremote.webp";
+import waterbottle from "./images/caretaker/waterbottle.webp";
+import wheelchair from "./images/caretaker/wheelchair.webp";
+import yogurt from "./images/caretaker/yogurt.webp";
 
 const SOURCES: Partial<Record<NeedSlug, string>> = {
   hunger,
@@ -106,6 +106,8 @@ export function Drawing({ slug, alt = "", className, ...rest }: DrawingProps) {
       src={src}
       alt={alt}
       draggable={false}
+      loading="lazy"
+      decoding="async"
       className={["select-none object-contain", className]
         .filter(Boolean)
         .join(" ")}
