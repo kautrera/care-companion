@@ -32,6 +32,12 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,webmanifest}"],
         navigateFallback: "/index.html",
+        // Take over from the previous SW immediately on next page load and
+        // clean up its old precache, so a redeploy never leaves users with
+        // stale asset references (broken images on hashed-asset rename).
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
       },
     }),
   ],
