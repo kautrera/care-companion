@@ -24,6 +24,7 @@ import facialcream from "./images/caretaker/facialcream.webp";
 import fruit from "./images/caretaker/fruit.webp";
 import makeup from "./images/caretaker/makeup.webp";
 import massage from "./images/caretaker/massage.webp";
+import milk from "./images/caretaker/milk.webp";
 import nightlight from "./images/caretaker/nightlight.webp";
 import nuts from "./images/caretaker/nuts.webp";
 import oatmeal from "./images/caretaker/oatmeal.webp";
@@ -82,6 +83,7 @@ const SOURCES: Partial<Record<NeedSlug, string>> = {
   phone,
   bed,
   papaya,
+  milk,
 };
 
 /** Slugs that currently have a watercolor illustration. */
