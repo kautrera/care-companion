@@ -205,11 +205,11 @@ export function CaretakerHome() {
         )}
       </div>
 
-      <footer className="grid grid-cols-2 gap-3 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
+      <footer className="grid grid-cols-2 gap-3 px-5 pt-3">
         <button
           type="button"
           onClick={() => navigate("/caretaker/history")}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-surface px-4 py-4 text-base font-semibold text-ink active:bg-surface-hi"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-surface px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 text-base font-semibold text-ink active:bg-surface-hi"
         >
           <svg
             viewBox="0 0 24 24"
@@ -229,7 +229,7 @@ export function CaretakerHome() {
         <button
           type="button"
           onClick={handToPatient}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-4 text-base font-semibold text-bg active:opacity-90"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 text-base font-semibold text-bg active:opacity-90"
         >
           <svg
             viewBox="0 0 24 24"
