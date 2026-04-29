@@ -48,7 +48,8 @@ export type CaretakerOnlyNeedSlug =
   | "sofa"
   | "phone"
   | "bed"
-  | "papaya";
+  | "papaya"
+  | "milk";
 
 export type NeedSlug = CoreNeedSlug | CaretakerOnlyNeedSlug;
 
@@ -129,6 +130,7 @@ export const NEED_LABELS: Record<NeedSlug, string> = {
   phone: "Phone",
   bed: "Bed",
   papaya: "Papaya",
+  milk: "Milk",
 };
 
 export const CORE_NEEDS: CoreNeedSlug[] = [
@@ -174,6 +176,7 @@ export const CARETAKER_ONLY_NEEDS: CaretakerOnlyNeedSlug[] = [
   "phone",
   "bed",
   "papaya",
+  "milk",
 ];
 
 /** Order all needs are seeded for new patients. */

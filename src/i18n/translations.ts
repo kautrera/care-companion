@@ -266,6 +266,7 @@ const en: Strings = {
     phone: "Phone",
     papaya: "Papaya",
     bed: "Bed",
+    milk: "Milk",
   },
   needQuestions: {
     hunger: "Hungry?",
@@ -307,6 +308,7 @@ const en: Strings = {
     phone: "Phone?",
     bed: "Bed?",
     papaya: "Papaya?",
+    milk: "Do you want milk?",
   },
 };
 
@@ -459,6 +461,7 @@ const ptBR: Strings = {
     phone: "Celular",
     bed: "Cama",
     papaya: "Mamão",
+    milk: "Leite",
   },
   needQuestions: {
     hunger: "Fome?",
@@ -500,6 +503,7 @@ const ptBR: Strings = {
     phone: "Celular?",
     bed: "Cama?",
     papaya: "Mamão?",
+    milk: "Leite?",
   },
 };
 
