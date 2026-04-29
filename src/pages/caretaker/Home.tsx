@@ -2,13 +2,14 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { usePatient } from "../../hooks/usePatient";
-import { useNeeds } from "../../hooks/useNeeds";
+import { sortNeedsForDisplay, useNeeds } from "../../hooks/useNeeds";
 import { useInteractions } from "../../hooks/useInteractions";
 import { NeedTile } from "../../components/NeedTile";
 import { Drawing } from "../../drawings";
 import { useAppStore } from "../../store/useAppStore";
-import { NEED_QUESTIONS, type NeedSlug } from "../../lib/types";
+import { type NeedSlug } from "../../lib/types";
 import { formatRelative } from "../../lib/time";
+import { useTranslation } from "../../i18n";
 
 export function CaretakerHome() {
   const navigate = useNavigate();
@@ -20,20 +21,22 @@ export function CaretakerHome() {
   const setMode = useAppStore((s) => s.setMode);
   const lastAnswer = useAppStore((s) => s.lastAnswer);
   const clearLastAnswer = useAppStore((s) => s.clearLastAnswer);
+  const { t, locale } = useTranslation();
 
   const [query, setQuery] = useState("");
 
   const visibleNeeds = useMemo(() => {
-    const enabled = needs.filter((n) => n.enabled);
-    if (!query.trim()) return enabled;
+    const enabled = needs.filter((n) => n.enabled_caretaker);
+    const sorted = sortNeedsForDisplay(enabled, t.needs, locale);
+    if (!query.trim()) return sorted;
     const q = query.trim().toLowerCase();
-    return enabled.filter(
+    return sorted.filter(
       (n) =>
-        n.label.toLowerCase().includes(q) ||
+        t.needs[n.slug].toLowerCase().includes(q) ||
         n.slug.toLowerCase().includes(q) ||
-        NEED_QUESTIONS[n.slug].toLowerCase().includes(q)
+        t.needQuestions[n.slug].toLowerCase().includes(q)
     );
-  }, [needs, query]);
+  }, [needs, query, t, locale]);
 
   const recent = interactions.slice(0, 3);
 
@@ -52,7 +55,7 @@ export function CaretakerHome() {
       <header className="flex items-center gap-3 px-5 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-wider text-ink-mute">
-            Caring for
+            {t.caretaker.caringFor}
           </p>
           <h1 className="truncate text-xl font-semibold tracking-tight">
             {patient?.name ?? "—"}
@@ -61,7 +64,7 @@ export function CaretakerHome() {
         <button
           type="button"
           onClick={() => navigate("/caretaker/settings")}
-          aria-label="Settings"
+          aria-label={t.caretaker.settingsAria}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-ink-mute active:bg-surface-hi"
         >
           <svg
@@ -95,7 +98,7 @@ export function CaretakerHome() {
           </svg>
           <input
             type="search"
-            placeholder="Search needs and history…"
+            placeholder={t.caretaker.search}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-transparent text-base text-ink placeholder:text-ink-mute/70 outline-none"
@@ -114,38 +117,40 @@ export function CaretakerHome() {
                 ? "bg-yes/15 text-yes-hi"
                 : "bg-no/15 text-no-hi",
             ].join(" ")}
-            aria-label="Clear last answer"
+            aria-label={t.caretaker.tapToDismiss}
           >
-            <Drawing slug={lastAnswer.slug} className="h-10 w-10 text-current" />
+            <Drawing slug={lastAnswer.slug} className="h-10 w-10" />
             <div className="flex-1 min-w-0">
               <p className="text-sm uppercase tracking-wider opacity-80">
-                Patient answered
+                {t.caretaker.patientAnswered}
               </p>
               <p className="truncate font-semibold">
-                {lastAnswer.response === "yes" ? "Yes" : "No"} —{" "}
-                {NEED_QUESTIONS[lastAnswer.slug]}
+                {lastAnswer.response === "yes" ? t.patient.yes : t.patient.no}{" "}
+                — {t.needQuestions[lastAnswer.slug]}
               </p>
             </div>
-            <span className="text-xs opacity-70">tap to dismiss</span>
+            <span className="text-xs opacity-70">
+              {t.caretaker.tapToDismiss}
+            </span>
           </button>
         )}
 
         <h2 className="mb-3 text-lg font-semibold tracking-tight">
-          Ask the patient
+          {t.caretaker.askThePatient}
         </h2>
         <div className="grid grid-cols-2 gap-3 pb-3">
           {visibleNeeds.map((need) => (
             <NeedTile
               key={need.id}
               slug={need.slug}
-              label={need.label}
+              label={t.needs[need.slug]}
               onSelect={onAsk}
               size="md"
             />
           ))}
           {visibleNeeds.length === 0 && (
             <p className="col-span-2 py-8 text-center text-ink-mute">
-              No questions match "{query}".
+              {t.caretaker.noResults.replace("{query}", query)}
             </p>
           )}
         </div>
@@ -154,14 +159,14 @@ export function CaretakerHome() {
           <div className="pb-3">
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-lg font-semibold tracking-tight">
-                Recent activity
+                {t.caretaker.recentActivity}
               </h2>
               <button
                 type="button"
                 onClick={() => navigate("/caretaker/history")}
                 className="text-sm text-accent underline-offset-4 hover:underline"
               >
-                See all
+                {t.caretaker.seeAll}
               </button>
             </div>
             <ul className="flex flex-col gap-2">
@@ -170,22 +175,23 @@ export function CaretakerHome() {
                   key={row.id}
                   className="flex items-center gap-3 rounded-2xl bg-surface px-3 py-2 ring-1 ring-line/30"
                 >
-                  <Drawing
-                    slug={row.need_slug}
-                    className="h-9 w-9 text-ink"
-                  />
+                  <Drawing slug={row.need_slug} className="h-9 w-9" />
                   <div className="flex-1 min-w-0">
                     <p className="truncate text-sm font-semibold">
                       {row.kind === "patient_request"
-                        ? "Asked for "
-                        : "Answered "}
+                        ? t.caretaker.askedFor
+                        : t.caretaker.answered}
                       {row.kind === "caretaker_question" && row.response
-                        ? `${row.response}: `
+                        ? `${
+                            row.response === "yes"
+                              ? t.patient.yes
+                              : t.patient.no
+                          }: `
                         : ""}
-                      {row.need_slug}
+                      {t.needs[row.need_slug].toLowerCase()}
                     </p>
                     <p className="text-xs text-ink-mute">
-                      {formatRelative(row.created_at)}
+                      {formatRelative(row.created_at, t, undefined, locale)}
                     </p>
                   </div>
                 </li>
@@ -214,7 +220,7 @@ export function CaretakerHome() {
             <path d="M3 3v5h5" />
             <path d="M12 7v5l3 2" />
           </svg>
-          History
+          {t.caretaker.history}
         </button>
         <button
           type="button"
@@ -233,7 +239,7 @@ export function CaretakerHome() {
             <path d="M17 8l4 4-4 4" />
             <path d="M3 12h18" />
           </svg>
-          Hand to patient
+          {t.caretaker.handToPatient}
         </button>
       </footer>
     </div>

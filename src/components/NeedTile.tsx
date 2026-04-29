@@ -1,5 +1,5 @@
 import type { NeedSlug } from "../lib/types";
-import { Drawing } from "../drawings";
+import { Drawing, hasDrawing } from "../drawings";
 
 interface NeedTileProps {
   slug: NeedSlug;
@@ -9,6 +9,8 @@ interface NeedTileProps {
 }
 
 export function NeedTile({ slug, label, onSelect, size = "lg" }: NeedTileProps) {
+  const withImage = hasDrawing(slug);
+
   return (
     <button
       type="button"
@@ -19,18 +21,31 @@ export function NeedTile({ slug, label, onSelect, size = "lg" }: NeedTileProps) 
       ].join(" ")}
       aria-label={label}
     >
-      <Drawing
-        slug={slug}
-        className={size === "lg" ? "h-24 w-24" : "h-16 w-16"}
-      />
-      <span
-        className={[
-          "font-semibold tracking-tight",
-          size === "lg" ? "text-2xl" : "text-lg",
-        ].join(" ")}
-      >
-        {label}
-      </span>
+      {withImage ? (
+        <>
+          <Drawing
+            slug={slug}
+            className={size === "lg" ? "h-24 w-24" : "h-16 w-16"}
+          />
+          <span
+            className={[
+              "font-semibold tracking-tight",
+              size === "lg" ? "text-2xl" : "text-lg",
+            ].join(" ")}
+          >
+            {label}
+          </span>
+        </>
+      ) : (
+        <span
+          className={[
+            "px-1 text-center font-semibold leading-tight tracking-tight",
+            size === "lg" ? "text-2xl" : "text-base",
+          ].join(" ")}
+        >
+          {label}
+        </span>
+      )}
     </button>
   );
 }

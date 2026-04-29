@@ -1,9 +1,1 @@
-export { Drawing } from "./Drawing";
-export { HungerDrawing } from "./HungerDrawing";
-export { ThirstDrawing } from "./ThirstDrawing";
-export { BathroomDrawing } from "./BathroomDrawing";
-export { DiaperDrawing } from "./DiaperDrawing";
-export { PainDrawing } from "./PainDrawing";
-export { TiredDrawing } from "./TiredDrawing";
-export { ColdDrawing } from "./ColdDrawing";
-export { HotDrawing } from "./HotDrawing";
+export { Drawing, DRAWING_SLUGS, hasDrawing } from "./Drawing";

@@ -2,14 +2,21 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Screen } from "../components/Screen";
 import { supabase } from "../lib/supabase";
-import { DEFAULT_NEEDS, NEED_LABELS, DEFAULT_ENABLED } from "../lib/types";
+import {
+  DEFAULT_NEEDS,
+  NEED_LABELS,
+  DEFAULT_ENABLED_PATIENT,
+  DEFAULT_ENABLED_CARETAKER,
+} from "../lib/types";
 import { useAuth } from "../hooks/useAuth";
 import { useAppStore } from "../store/useAppStore";
+import { useTranslation } from "../i18n";
 
 export function Setup() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const setMode = useAppStore((s) => s.setMode);
+  const { t } = useTranslation();
 
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -17,15 +24,13 @@ export function Setup() {
 
   const onSubmit = useCallback(async () => {
     if (!user) {
-      setError("You're not signed in.");
+      setError(t.setup.notSignedIn);
       return;
     }
     if (name.trim().length < 1) return;
     setError(null);
     setSubmitting(true);
 
-    // pin_hash / pin_salt remain in the schema as NOT NULL but unused. We
-    // store empty strings so existing rows continue to work.
     const { data: patient, error: pErr } = await supabase
       .from("patients")
       .insert({
@@ -39,16 +44,20 @@ export function Setup() {
 
     if (pErr || !patient) {
       setSubmitting(false);
-      setError(pErr?.message ?? "Could not save patient");
+      setError(pErr?.message ?? t.setup.couldNotSavePatient);
       return;
     }
 
-    const needRows = DEFAULT_NEEDS.map((slug, idx) => ({
+    // sort_order seeds at 0 — render is alphabetical by localized label by
+    // default, and Settings reorder rewrites every sort_order if the
+    // caretaker chooses a manual order.
+    const needRows = DEFAULT_NEEDS.map((slug) => ({
       patient_id: patient.id,
       slug,
       label: NEED_LABELS[slug],
-      enabled: DEFAULT_ENABLED.includes(slug),
-      sort_order: idx,
+      enabled_patient: DEFAULT_ENABLED_PATIENT.includes(slug),
+      enabled_caretaker: DEFAULT_ENABLED_CARETAKER.includes(slug),
+      sort_order: 0,
     }));
 
     const { error: nErr } = await supabase.from("needs").insert(needRows);
@@ -60,21 +69,18 @@ export function Setup() {
 
     setMode("caretaker");
     navigate("/caretaker", { replace: true });
-  }, [user, name, navigate, setMode]);
+  }, [user, name, navigate, setMode, t]);
 
   return (
-    <Screen title="Set up">
+    <Screen title={t.setup.title}>
       <div className="flex flex-1 flex-col gap-6 py-4">
-        <p className="text-ink-mute">
-          What is the patient's name? This appears at the top of the
-          caretaker view.
-        </p>
+        <p className="text-ink-mute">{t.setup.prompt}</p>
         <input
           type="text"
           autoFocus
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Grandma Rose"
+          placeholder={t.setup.placeholder}
           className="rounded-2xl bg-surface px-4 py-4 text-lg outline-none focus:ring-2 focus:ring-accent"
         />
         {error && (
@@ -88,7 +94,7 @@ export function Setup() {
           onClick={onSubmit}
           className="mt-auto rounded-2xl bg-accent px-4 py-4 text-lg font-semibold text-bg disabled:opacity-50"
         >
-          {submitting ? "Saving…" : "Continue"}
+          {submitting ? t.setup.saving : t.setup.continue}
         </button>
       </div>
     </Screen>

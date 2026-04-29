@@ -24,7 +24,8 @@ create table if not exists public.needs (
   patient_id uuid not null references public.patients(id) on delete cascade,
   slug text not null,
   label text not null,
-  enabled boolean not null default true,
+  enabled_patient boolean not null default true,
+  enabled_caretaker boolean not null default true,
   sort_order int not null default 0,
   unique (patient_id, slug)
 );

@@ -3,27 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { usePatient } from "../../hooks/usePatient";
 import { useInteractions } from "../../hooks/useInteractions";
-import { useNeeds } from "../../hooks/useNeeds";
+import { sortNeedsForDisplay, useNeeds } from "../../hooks/useNeeds";
 import { Drawing } from "../../drawings";
 import {
   formatAbsolute,
   formatDayHeader,
   formatRelative,
 } from "../../lib/time";
-import {
-  NEED_LABELS,
-  type Interaction,
-  type NeedSlug,
-} from "../../lib/types";
+import { type Interaction, type NeedSlug } from "../../lib/types";
+import { useTranslation } from "../../i18n";
 
 type DateRange = "today" | "7d" | "30d" | "all";
-
-const RANGE_LABELS: Record<DateRange, string> = {
-  today: "Today",
-  "7d": "7 days",
-  "30d": "30 days",
-  all: "All",
-};
 
 function withinRange(iso: string, range: DateRange): boolean {
   if (range === "all") return true;
@@ -66,10 +56,18 @@ export function History() {
   const { patient } = usePatient(user?.id);
   const { interactions, loading } = useInteractions(patient?.id);
   const { needs } = useNeeds(patient?.id);
+  const { t, locale } = useTranslation();
 
   const [query, setQuery] = useState("");
   const [range, setRange] = useState<DateRange>("7d");
   const [needFilter, setNeedFilter] = useState<NeedSlug | "all">("all");
+
+  const RANGE_LABELS: Record<DateRange, string> = {
+    today: t.history.today,
+    "7d": t.history.days7,
+    "30d": t.history.days30,
+    all: t.history.all,
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -77,14 +75,14 @@ export function History() {
       if (!withinRange(row.created_at, range)) return false;
       if (needFilter !== "all" && row.need_slug !== needFilter) return false;
       if (q) {
-        const label = NEED_LABELS[row.need_slug] ?? row.need_slug;
+        const label = t.needs[row.need_slug] ?? row.need_slug;
         const haystack = `${label} ${row.need_slug} ${row.kind} ${row.response ?? ""}`
           .toLowerCase();
         if (!haystack.includes(q)) return false;
       }
       return true;
     });
-  }, [interactions, query, range, needFilter]);
+  }, [interactions, query, range, needFilter, t]);
 
   const groups = useMemo(() => groupByDay(filtered), [filtered]);
 
@@ -102,7 +100,7 @@ export function History() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          aria-label="Back"
+          aria-label={t.history.backAria}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-ink-mute active:bg-surface-hi"
         >
           <svg
@@ -117,7 +115,9 @@ export function History() {
             <path d="m15 18-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-xl font-semibold tracking-tight">History</h1>
+        <h1 className="text-xl font-semibold tracking-tight">
+          {t.history.title}
+        </h1>
       </header>
 
       <div className="flex flex-col gap-2 px-5 pb-3">
@@ -136,7 +136,7 @@ export function History() {
           </svg>
           <input
             type="search"
-            placeholder="Search history…"
+            placeholder={t.history.search}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-transparent text-base text-ink placeholder:text-ink-mute/70 outline-none"
@@ -172,9 +172,9 @@ export function History() {
                 : "bg-surface text-ink-mute",
             ].join(" ")}
           >
-            All needs
+            {t.history.allNeeds}
           </button>
-          {needs.map((n) => (
+          {sortNeedsForDisplay(needs, t.needs, locale).map((n) => (
             <button
               key={n.id}
               type="button"
@@ -187,7 +187,7 @@ export function History() {
               ].join(" ")}
             >
               <Drawing slug={n.slug} className="h-4 w-4" />
-              {n.label}
+              {t.needs[n.slug]}
               {summary[n.slug] ? (
                 <span className="ml-1 opacity-70">{summary[n.slug]}</span>
               ) : null}
@@ -197,16 +197,16 @@ export function History() {
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        {loading && <p className="py-8 text-center text-ink-mute">Loading…</p>}
+        {loading && (
+          <p className="py-8 text-center text-ink-mute">{t.loading}</p>
+        )}
         {!loading && filtered.length === 0 && (
-          <p className="py-12 text-center text-ink-mute">
-            No interactions yet for this filter.
-          </p>
+          <p className="py-12 text-center text-ink-mute">{t.history.empty}</p>
         )}
         {groups.map((group) => (
           <section key={group.key} className="mb-5">
             <h2 className="mb-2 text-sm uppercase tracking-wider text-ink-mute">
-              {formatDayHeader(group.iso)}
+              {formatDayHeader(group.iso, t, undefined, locale)}
             </h2>
             <ul className="flex flex-col gap-2">
               {group.rows.map((row) => (
@@ -219,14 +219,19 @@ export function History() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-base font-semibold">
-                      {NEED_LABELS[row.need_slug] ?? row.need_slug}
+                      {t.needs[row.need_slug] ?? row.need_slug}
                     </p>
                     <p className="text-xs text-ink-mute">
-                      {formatRelative(row.created_at)} ·{" "}
-                      {formatAbsolute(row.created_at)}
+                      {formatRelative(row.created_at, t, undefined, locale)} ·{" "}
+                      {formatAbsolute(row.created_at, locale)}
                     </p>
                   </div>
-                  <OutcomeChip row={row} />
+                  <OutcomeChip
+                    row={row}
+                    askedLabel={t.history.chipAsked}
+                    yesLabel={t.history.chipYes}
+                    noLabel={t.history.chipNo}
+                  />
                 </li>
               ))}
             </ul>
@@ -237,25 +242,37 @@ export function History() {
   );
 }
 
-function OutcomeChip({ row }: { row: Interaction }) {
-  if (row.kind === "patient_request") {
-    return (
-      <span className="rounded-full bg-warn/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-warn">
-        Asked
-      </span>
-    );
-  }
+function OutcomeChip({
+  row,
+  askedLabel,
+  yesLabel,
+  noLabel,
+}: {
+  row: Interaction;
+  askedLabel: string;
+  yesLabel: string;
+  noLabel: string;
+}) {
   if (row.response === "yes") {
     return (
       <span className="rounded-full bg-yes/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-yes-hi">
-        Yes
+        {yesLabel}
       </span>
     );
   }
   if (row.response === "no") {
     return (
       <span className="rounded-full bg-no/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-no-hi">
-        No
+        {noLabel}
+      </span>
+    );
+  }
+  // Legacy patient_request rows logged before the confirm flow had no
+  // response stored — show as "Asked".
+  if (row.kind === "patient_request") {
+    return (
+      <span className="rounded-full bg-warn/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-warn">
+        {askedLabel}
       </span>
     );
   }

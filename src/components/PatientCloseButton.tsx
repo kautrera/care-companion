@@ -1,22 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../store/useAppStore";
+import { useTranslation } from "../i18n";
 
 interface PatientCloseButtonProps {
-  /** Where the close button sits relative to the safe area. */
-  position?: "right" | "left";
+  className?: string;
 }
 
 /**
- * A close button shown in the corner of patient screens. Tapping it
- * switches the device back to caretaker mode and returns to the
- * caretaker home.
+ * Close button shown in the header of patient screens. Tapping it switches
+ * the device back to caretaker mode and returns to the caretaker home.
+ * Positioning is handled by the parent.
  */
-export function PatientCloseButton({
-  position = "right",
-}: PatientCloseButtonProps) {
+export function PatientCloseButton({ className }: PatientCloseButtonProps) {
   const navigate = useNavigate();
   const setMode = useAppStore((s) => s.setMode);
   const clearArmed = useAppStore((s) => s.clearArmedQuestion);
+  const { t } = useTranslation();
 
   function close() {
     clearArmed();
@@ -28,11 +27,13 @@ export function PatientCloseButton({
     <button
       type="button"
       onClick={close}
-      aria-label="Close patient mode"
+      aria-label={t.patient.closeAria}
       className={[
-        "absolute top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex h-10 w-10 items-center justify-center rounded-full bg-surface/60 text-ink-mute backdrop-blur active:bg-surface-hi",
-        position === "right" ? "right-3" : "left-3",
-      ].join(" ")}
+        "flex h-10 w-10 items-center justify-center rounded-full bg-surface/60 text-ink-mute backdrop-blur active:bg-surface-hi",
+        className ?? "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <svg
         viewBox="0 0 24 24"

@@ -2,9 +2,11 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { Screen } from "../../components/Screen";
+import { useTranslation } from "../../i18n";
 
 export function SignUp() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -26,9 +28,7 @@ export function SignUp() {
       return;
     }
     if (!data.session) {
-      setInfo(
-        "Account created. Please confirm your email and then sign in."
-      );
+      setInfo(t.auth.accountCreatedConfirmEmail);
       return;
     }
     navigate("/setup", { replace: true });
@@ -39,16 +39,14 @@ export function SignUp() {
       <div className="flex flex-1 flex-col justify-center gap-6 py-8">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">
-            Create caretaker account
+            {t.auth.signUpTitle}
           </h1>
-          <p className="text-ink-mute">
-            One account per family. You'll set up the patient next.
-          </p>
+          <p className="text-ink-mute">{t.auth.signUpSubtitle}</p>
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-ink-mute">Email</span>
+            <span className="text-ink-mute">{t.auth.email}</span>
             <input
               type="email"
               required
@@ -61,7 +59,7 @@ export function SignUp() {
             />
           </label>
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-ink-mute">Password</span>
+            <span className="text-ink-mute">{t.auth.password}</span>
             <input
               type="password"
               required
@@ -89,14 +87,14 @@ export function SignUp() {
             disabled={submitting}
             className="mt-2 rounded-2xl bg-accent px-4 py-4 text-lg font-semibold text-bg disabled:opacity-50"
           >
-            {submitting ? "Creating…" : "Create account"}
+            {submitting ? t.auth.creating : t.auth.createAccount}
           </button>
         </form>
 
         <p className="text-center text-ink-mute">
-          Already have one?{" "}
+          {t.auth.alreadyHaveOne}{" "}
           <Link to="/login" className="text-accent underline-offset-4 hover:underline">
-            Sign in
+            {t.auth.signIn}
           </Link>
         </p>
       </div>

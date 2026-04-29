@@ -24,6 +24,7 @@ import { Settings } from "./pages/caretaker/Settings";
 
 import { LockGuard } from "./components/LockGuard";
 import { Screen } from "./components/Screen";
+import { useTranslation } from "./i18n";
 
 function FullScreenMessage({
   title,
@@ -46,9 +47,10 @@ function RootRedirect() {
   const { user, loading: authLoading } = useAuth();
   const { patient, loading: patientLoading } = usePatient(user?.id);
   const mode = useAppStore((s) => s.mode);
+  const { t } = useTranslation();
 
   if (authLoading || (user && patientLoading)) {
-    return <FullScreenMessage title="Care Companion" body="Loading…" />;
+    return <FullScreenMessage title={t.appName} body={t.loading} />;
   }
   if (!user) return <Navigate to="/login" replace />;
   if (!patient) return <Navigate to="/setup" replace />;
@@ -58,8 +60,9 @@ function RootRedirect() {
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
   if (loading) {
-    return <FullScreenMessage title="Care Companion" body="Loading…" />;
+    return <FullScreenMessage title={t.appName} body={t.loading} />;
   }
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;

@@ -11,8 +11,9 @@ import {
   vibrateShort,
   vibrateLong,
 } from "../../lib/audio";
-import { NEED_QUESTIONS, type NeedSlug } from "../../lib/types";
+import { type NeedSlug } from "../../lib/types";
 import { useAppStore } from "../../store/useAppStore";
+import { useTranslation } from "../../i18n";
 
 export function QuestionAnswer() {
   const { slug } = useParams<{ slug: NeedSlug }>();
@@ -23,6 +24,7 @@ export function QuestionAnswer() {
   const setLastAnswer = useAppStore((s) => s.setLastAnswer);
   const clearArmed = useAppStore((s) => s.clearArmedQuestion);
   const setMode = useAppStore((s) => s.setMode);
+  const { t } = useTranslation();
 
   const [submitting, setSubmitting] = useState(false);
   const [answered, setAnswered] = useState<"yes" | "no" | null>(null);
@@ -65,7 +67,7 @@ export function QuestionAnswer() {
 
   if (!slug) return null;
 
-  const question = NEED_QUESTIONS[slug as NeedSlug];
+  const question = t.needQuestions[slug as NeedSlug];
 
   return (
     <div className="relative flex h-[100dvh] w-full flex-col bg-bg">
@@ -73,7 +75,7 @@ export function QuestionAnswer() {
         type="button"
         onClick={cancel}
         disabled={submitting || answered !== null}
-        aria-label="Back to caretaker"
+        aria-label={t.patient.back}
         className="absolute left-3 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex h-10 items-center gap-2 rounded-full bg-surface/60 pl-2 pr-4 text-ink-mute backdrop-blur active:bg-surface-hi disabled:opacity-40"
       >
         <svg
@@ -87,20 +89,24 @@ export function QuestionAnswer() {
         >
           <path d="m15 18-6-6 6-6" />
         </svg>
-        <span className="text-sm font-medium">Back</span>
+        <span className="text-sm font-medium">{t.patient.back}</span>
       </button>
-      <div className="flex h-[66.66%] flex-col items-center justify-center px-6 pt-[max(3rem,env(safe-area-inset-top))]">
-        <Drawing slug={slug as NeedSlug} className="h-56 w-56 text-ink" />
-        <p className="mt-6 text-center text-3xl font-semibold tracking-tight">
+      <div className="flex min-h-0 flex-1 flex-col items-center px-2 pb-2 pt-[max(4rem,env(safe-area-inset-top))]">
+        <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+          <Drawing slug={slug as NeedSlug} className="h-full w-full" />
+        </div>
+        <p className="mt-2 px-4 text-center text-3xl font-semibold tracking-tight">
           {question}
         </p>
       </div>
-      <div className="flex flex-1 flex-col justify-end px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         {answered === null ? (
           <YesNoButtons
             onYes={() => respond("yes")}
             onNo={() => respond("no")}
             disabled={submitting}
+            yesLabel={t.patient.yes}
+            noLabel={t.patient.no}
             withThumbs
           />
         ) : (
@@ -110,7 +116,7 @@ export function QuestionAnswer() {
               answered === "yes" ? "bg-yes" : "bg-no",
             ].join(" ")}
           >
-            {answered === "yes" ? "Yes" : "No"}
+            {answered === "yes" ? t.patient.yes : t.patient.no}
           </div>
         )}
       </div>
