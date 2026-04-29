@@ -9,6 +9,7 @@ import { Drawing } from "../../drawings";
 import { useAppStore } from "../../store/useAppStore";
 import { type NeedSlug } from "../../lib/types";
 import { formatRelative } from "../../lib/time";
+import { primeAudio } from "../../lib/audio";
 import { useTranslation } from "../../i18n";
 
 export function CaretakerHome() {
@@ -41,6 +42,9 @@ export function CaretakerHome() {
   const recent = interactions.slice(0, 3);
 
   function onAsk(slug: NeedSlug) {
+    // Unlock SpeechSynthesis/Audio inside the user gesture so the question
+    // screen's auto-speak works on iOS Safari.
+    primeAudio();
     armQuestion(slug);
     navigate(`/patient/question/${slug}`);
   }

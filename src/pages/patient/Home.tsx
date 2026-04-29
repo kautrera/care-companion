@@ -8,6 +8,7 @@ import { PatientCloseButton } from "../../components/PatientCloseButton";
 import { useAppStore } from "../../store/useAppStore";
 import { type NeedSlug } from "../../lib/types";
 import { useTranslation } from "../../i18n";
+import { primeAudio } from "../../lib/audio";
 
 export function PatientHome() {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ export function PatientHome() {
   }, [armedQuestion, navigate]);
 
   function onSelect(slug: NeedSlug) {
+    // Unlock SpeechSynthesis/Audio inside the user gesture so the next
+    // screen's auto-speak works on iOS Safari.
+    primeAudio();
     navigate(`/patient/need/${slug}`);
   }
 

@@ -6,8 +6,10 @@ import { useInteractions } from "../../hooks/useInteractions";
 import { Drawing } from "../../drawings";
 import { YesNoButtons } from "../../components/YesNoButtons";
 import {
+  cancelSpeak,
   playYesChime,
   playNoChime,
+  speak,
   vibrateShort,
   vibrateLong,
 } from "../../lib/audio";
@@ -24,7 +26,7 @@ export function QuestionAnswer() {
   const setLastAnswer = useAppStore((s) => s.setLastAnswer);
   const clearArmed = useAppStore((s) => s.clearArmedQuestion);
   const setMode = useAppStore((s) => s.setMode);
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const [submitting, setSubmitting] = useState(false);
   const [answered, setAnswered] = useState<"yes" | "no" | null>(null);
@@ -33,10 +35,18 @@ export function QuestionAnswer() {
     if (!slug) navigate("/patient", { replace: true });
   }, [slug, navigate]);
 
+  // Speak the question on mount; cancel anything in-flight on unmount.
+  useEffect(() => {
+    if (!slug) return;
+    speak(t.needQuestions[slug as NeedSlug], locale);
+    return () => cancelSpeak();
+  }, [slug, locale, t]);
+
   const respond = useCallback(
     async (response: "yes" | "no") => {
       if (!slug || !patient || submitting) return;
       setSubmitting(true);
+      cancelSpeak();
       await log("caretaker_question", slug as NeedSlug, response);
       if (response === "yes") {
         playYesChime();
@@ -60,6 +70,7 @@ export function QuestionAnswer() {
 
   const cancel = useCallback(() => {
     if (submitting) return;
+    cancelSpeak();
     clearArmed();
     setMode("caretaker");
     navigate("/caretaker", { replace: true });

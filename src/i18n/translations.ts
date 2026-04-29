@@ -101,6 +101,9 @@ export interface Strings {
     showInPatient: string;
     showInCaretaker: string;
     showColumnHeader: string;
+    audio: string;
+    voiceOver: string;
+    confirmationSounds: string;
   };
 
   time: {
@@ -211,6 +214,9 @@ const en: Strings = {
     showInPatient: "Show on patient grid",
     showInCaretaker: "Show in caretaker ask",
     showColumnHeader: "Show in",
+    audio: "Audio",
+    voiceOver: "Voice over",
+    confirmationSounds: "Confirmation sounds",
   },
 
   time: {
@@ -401,6 +407,9 @@ const ptBR: Strings = {
     showInPatient: "Mostrar para o paciente",
     showInCaretaker: "Mostrar no cuidador",
     showColumnHeader: "Visível em",
+    audio: "Áudio",
+    voiceOver: "Narração",
+    confirmationSounds: "Sons de confirmação",
   },
 
   time: {
@@ -470,7 +479,7 @@ const ptBR: Strings = {
     yogurt: "Iogurte?",
     orangejuice: "Suco de laranja?",
     waterbottle: "Água?",
-    crackers: "Biscoito?",
+    crackers: "Bolacha?",
     toast: "Torrada?",
     nuts: "Castanhas?",
     closewindows: "Fecho a janela?",

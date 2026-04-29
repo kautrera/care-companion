@@ -15,6 +15,10 @@ export function Settings() {
   const { needs, refresh: refreshNeeds } = useNeeds(patient?.id);
   const { t, lang, locale } = useTranslation();
   const setLanguage = useAppStore((s) => s.setLanguage);
+  const voiceEnabled = useAppStore((s) => s.voiceEnabled);
+  const setVoiceEnabled = useAppStore((s) => s.setVoiceEnabled);
+  const soundsEnabled = useAppStore((s) => s.soundsEnabled);
+  const setSoundsEnabled = useAppStore((s) => s.setSoundsEnabled);
 
   const [name, setName] = useState(patient?.name ?? "");
   const [savingName, setSavingName] = useState(false);
@@ -207,6 +211,60 @@ export function Settings() {
 
         <section className="mb-6">
           <h2 className="mb-2 text-sm uppercase tracking-wider text-ink-mute">
+            {t.settings.audio}
+          </h2>
+          <div className="flex flex-col gap-2 rounded-2xl bg-surface p-4 ring-1 ring-line/30">
+            <label className="flex items-center justify-between gap-3">
+              <span className="text-base font-medium text-ink">
+                {t.settings.voiceOver}
+              </span>
+              <input
+                type="checkbox"
+                checked={voiceEnabled}
+                onChange={(e) => setVoiceEnabled(e.target.checked)}
+                className="peer sr-only"
+              />
+              <span className="relative h-6 w-11 shrink-0 rounded-full bg-surface-hi transition-colors peer-checked:bg-accent">
+                <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-ink transition-transform peer-checked:translate-x-5" />
+              </span>
+            </label>
+            <label className="flex items-center justify-between gap-3">
+              <span className="text-base font-medium text-ink">
+                {t.settings.confirmationSounds}
+              </span>
+              <input
+                type="checkbox"
+                checked={soundsEnabled}
+                onChange={(e) => setSoundsEnabled(e.target.checked)}
+                className="peer sr-only"
+              />
+              <span className="relative h-6 w-11 shrink-0 rounded-full bg-surface-hi transition-colors peer-checked:bg-accent">
+                <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-ink transition-transform peer-checked:translate-x-5" />
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="mb-2 text-sm uppercase tracking-wider text-ink-mute">
+            {t.settings.account}
+          </h2>
+          <div className="flex flex-col gap-2 rounded-2xl bg-surface p-4 ring-1 ring-line/30">
+            <p className="truncate text-sm text-ink-mute">
+              {t.settings.signedInAs} {user?.email ?? "—"}
+            </p>
+            <button
+              type="button"
+              onClick={signOut}
+              className="self-start rounded-xl bg-no px-4 py-2 text-sm font-semibold text-white active:bg-no-hi"
+            >
+              {t.settings.signOut}
+            </button>
+          </div>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="mb-2 text-sm uppercase tracking-wider text-ink-mute">
             {t.settings.needs}
           </h2>
           <ul className="flex flex-col gap-2">
@@ -282,24 +340,6 @@ export function Settings() {
               </li>
             ))}
           </ul>
-        </section>
-
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm uppercase tracking-wider text-ink-mute">
-            {t.settings.account}
-          </h2>
-          <div className="flex flex-col gap-2 rounded-2xl bg-surface p-4 ring-1 ring-line/30">
-            <p className="truncate text-sm text-ink-mute">
-              {t.settings.signedInAs} {user?.email ?? "—"}
-            </p>
-            <button
-              type="button"
-              onClick={signOut}
-              className="self-start rounded-xl bg-no px-4 py-2 text-sm font-semibold text-white active:bg-no-hi"
-            >
-              {t.settings.signOut}
-            </button>
-          </div>
         </section>
       </div>
     </div>
