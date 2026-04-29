@@ -57,7 +57,7 @@ export function YesNoButtons({
         type="button"
         disabled={disabled}
         onClick={onNo}
-        className="flex h-32 items-center justify-center gap-3 rounded-3xl bg-no text-3xl font-bold text-white shadow-lg shadow-no/30 transition-transform active:scale-[0.98] active:bg-no-hi disabled:opacity-50"
+        className="flex min-h-32 items-center justify-center gap-3 rounded-3xl bg-no pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6 text-3xl font-bold text-white shadow-lg shadow-no/30 transition-transform active:scale-[0.98] active:bg-no-hi disabled:opacity-50"
       >
         {withThumbs && <ThumbsDownIcon />}
         <span>{noLabel}</span>
@@ -66,7 +66,7 @@ export function YesNoButtons({
         type="button"
         disabled={disabled}
         onClick={onYes}
-        className="flex h-32 items-center justify-center gap-3 rounded-3xl bg-yes text-3xl font-bold text-white shadow-lg shadow-yes/30 transition-transform active:scale-[0.98] active:bg-yes-hi disabled:opacity-50"
+        className="flex min-h-32 items-center justify-center gap-3 rounded-3xl bg-yes pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6 text-3xl font-bold text-white shadow-lg shadow-yes/30 transition-transform active:scale-[0.98] active:bg-yes-hi disabled:opacity-50"
       >
         {withThumbs && <ThumbsUpIcon />}
         <span>{yesLabel}</span>

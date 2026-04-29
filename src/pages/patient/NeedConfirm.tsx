@@ -99,7 +99,7 @@ export function NeedConfirm() {
         </p>
       </div>
 
-      <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="px-4">
         {answered === null ? (
           <YesNoButtons
             onYes={() => respond("yes")}
@@ -112,7 +112,7 @@ export function NeedConfirm() {
         ) : (
           <div
             className={[
-              "flex h-32 items-center justify-center rounded-3xl text-3xl font-bold text-white",
+              "flex min-h-32 items-center justify-center rounded-3xl pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6 text-3xl font-bold text-white",
               answered === "yes" ? "bg-yes" : "bg-no",
             ].join(" ")}
           >
